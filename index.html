@@ -28,7 +28,7 @@
             <button onclick="window.open(`https://discord.gg/6uxJzhyvKq`, '_blank')" class="hrznMainButton hidden md:flex rounded-full bg-white text-blue-800"><i class="fa-brands fa-discord"></i></button>
         </div>
     </div>
-    <section class="h-dvh py-25 bg-red-500/0 flex items-center">
+    <section class="h-dvh py-25 bg-red-500/0 flex items-center bg-dots">
       <div class="bg-yellow-500/0 text-white mx-auto w-11/12 max-w-6xl md:w-4/6 z-10">
         <div class="grid md:grid-cols-[50%_1fr_auto] grid-cols-1 gap-10">
           <div class="flex flex-col gap-3 md:items-start items-center justify-center">
@@ -65,9 +65,12 @@
         </div>
       </div>
     </section>
-    <section class="h-dvh py-25 bg-red-500/10 flex items-center">
+    <section class="py-25 bg-gray-700/10 bg-dots flex items-center">
       <div class="bg-yellow-500/0 text-white mx-auto w-11/12 max-w-6xl md:w-4/6 z-10">
-        <p>Rules</p>
+        <div class="pb-15 flex flex-col items-center justify-center">
+          <p class="font-bold text-4xl text-blue-200">Rules</p>
+          <p class="text-xl">Mahasiswa Harus mematuhi Aturan Dibawah</p>
+        </div>
         <div class="grid grid-rows-[auto_1fr] gap-4 grid-cols-1 md:grid-cols-3">
           <!--  ATURAN -->
           <div class="rulesAbsen">
@@ -79,18 +82,49 @@
               <p class="text-[16px]">Selalu absen tepat waktu agar dosen tidak marah:)</p>
             </div>
           </div>
-          <div class="bg-gray-900/40 border-2 border-gray-800 p-5 rounded-2xl flex flex-col gap-3">
-            <div class="bg-green-200 w-fit rounded-xl">
-              <i class="text p-5 text-xl text-green-600 fa-solid fa-circle-check"></i>
+          <div class="rulesAbsen">
+            <div class="bg-yellow-200 w-fit rounded-xl">
+              <i class="text p-5 text-xl text-yellow-600 fa-solid fa-clock"></i>
             </div>
             <div>
-              <p class="text-2xl font-bold">Tepat Waktu</p>
-              <p class="text-[16px]">Selalu absen tepat waktu agar dosen tidak marah:)</p>
+              <p class="text-2xl font-bold">Batas 15 Menit</p>
+              <p class="text-[16px]">Absen di 15 menit pertama tercatat hadir, lewat dari itu tercatat terlambat.</p>
+            </div>
+          </div>
+          <div class="rulesAbsen">
+            <div class="bg-blue-200 w-fit rounded-xl">
+              <i class="text p-5 text-xl text-blue-600 fa-solid fa-key"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-bold">Pakai NIM Sendiri</p>
+              <p class="text-[16px]">Satu NIM hanya bisa absen satu kali di setiap sesi, jadi pastikan NIM-mu benar.</p>
+            </div>
+          </div>
+          <div class="rulesAbsen">
+            <div class="bg-red-200 w-fit rounded-xl">
+              <i class="text p-5 text-xl text-red-600 fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-bold">Dilarang Titip Absen</p>
+              <p class="text-[16px]">Jangan absen untuk teman. Absen yang tidak sah akan dihapus oleh dosen.</p>
+            </div>
+          </div>
+          <div class="rulesAbsen">
+            <div class="bg-purple-200 w-fit rounded-xl">
+              <i class="text p-5 text-xl text-purple-600 fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-bold">Kode dari Dosen</p>
+              <p class="text-[16px]">Kode 6 digit hanya diberikan di kelas. Jangan bagikan ke teman yang tidak hadir.</p>
             </div>
           </div>
           <!--  -->
         </div>
       </div>
     </section>
+    <footer class="bg-black text-white h-30 flex flex-col items-center justify-center">
+      <p>Web Absen Kampus Created By Han's</p>
+      <p class="text-gray-500">Copyrights © 2026 All Rights Reserved</p>
+    </footer>
 </body>
 </html>
