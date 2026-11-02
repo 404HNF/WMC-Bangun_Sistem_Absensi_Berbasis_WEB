@@ -8,31 +8,34 @@
   <link href="./src/input.css" rel="stylesheet">
 </head>
 <body class="bg-gray-950">
-<div class="flex justify-between items-center fixed top-5 z-50 mx-auto w-full min-h-18 px-6">
-    <div class="bg-blue-300/10 backdrop-blur-3xl p-5 rounded-full flex justify-between items-center fixed inset-x-0 mx-auto w-11/12 max-w-6xl h-15 md:w-4/6">
-        <div class="flex-1">
+    <div class="flex justify-between items-center fixed top-5 z-50 mx-auto w-full min-h-18 px-6">
+        <div class="bg-blue-300/10 backdrop-blur-3xl p-5 rounded-full flex justify-between items-center fixed inset-x-0 mx-auto w-11/12 max-w-6xl h-15 md:w-4/6">
+            <div class="flex-1">
             <img draggable="false" oncontextmenu="return false;" class="h-8 select-none" src="./src/hans_projects_logo.png">
+            </div>
+            <ul class="hidden md:pointer-coarse:hidden md:flex gap-15">
+                <li>
+                    <a class="hrznHeaderNav" href="index.html">Absen</a>
+                </li>
+                <li>
+                    <a class="hrznHeaderNav" href="rules.html">Aturan</a>
+                </li>
+                <li>
+                    <a class="hrznHeaderNav" href="shop.html">Cara Absen?</a>
+                </li>
+            </ul>
+            <span class="flex flex-1 justify-end">
+                <button class="rounded-full bg-gray-500/30 border-gray-500 text-white font-bold border-2 py-2 px-3 flex flex-row justify-center items-center gap-3"><i class="fa-solid fa-right-to-bracket"></i><p>Login Dosen</p></button>
+            </span>
         </div>
-        <ul class="hidden md:pointer-coarse:hidden md:flex gap-15">
-            <li>
-                <a class="hrznHeaderNav" href="index.html">Absen</a>
-            </li>
-            <li>
-                <a class="hrznHeaderNav" href="rules.html">Aturan</a>
-            </li>
-            <li>
-                <a class="hrznHeaderNav" href="shop.html">Cara Absen?</a>
-            </li>
-        </ul>
-        <span class="flex flex-1 justify-end">
-            <button class="rounded-full bg-gray-500/30 border-gray-500 text-white font-bold border-2 py-2 px-3 flex flex-row justify-center items-center gap-3"><i class="fa-solid fa-right-to-bracket"></i><p>Login Dosen</p></button>
-        </span>
     </div>
-</div>
+    <!-- HERO -->
     <section class="md:h-dvh py-25 bg-red-500/0 flex items-center bg-dots">
       <div class="bg-yellow-500/0 text-white mx-auto w-11/12 max-w-6xl md:w-4/6 z-10">
         <div class="grid md:grid-cols-[1fr_50%] grid-cols-1 gap-10">
           <div class="flex flex-col gap-3 md:items-start items-center justify-center">
+          <span class="pil-status" id="pilStatus"><i class="titik"></i><span id="teksStatus">Memeriksa sesi…</span></span>
+          <div class="alert" id="pesanGagal" role="alert" hidden></div>
             <img src="./assets/ubbg_logo.png" class="w-30">
             <p class="hidden md:block text-5xl font-bold">Absen Kelas</p>
             <p class="hidden md:block text-4xl font-bold">Cepat, Tepat, tanpa Kertas!</p>
@@ -64,16 +67,16 @@
             </div>
           </div>
           <div class="flex justify-end items-end">
-            <form class="flex flex-col gap-5 bg-gray-900/40 border-2 border-gray-800 rounded-2xl px-8 py-10">
-              <div class="flex w-full justify-end"><div class="flex flex-row gap-2 items-center w-fit px-3 py-1.5 mb-auto rounded-full bg-red-500"><i class="fa-solid fa-clock"></i><p>Waktu Server:</p><p>--:--:--</p></div></div>
+            <form id="formAbsen" novalidate class="flex flex-col gap-5 bg-gray-900/40 border-2 border-gray-800 rounded-2xl px-8 py-10">
+              <div class="flex w-full justify-end"><div class="flex flex-row gap-2 items-center w-fit px-3 py-1.5 mb-auto rounded-full bg-red-500"><i class="fa-solid fa-clock"></i><p>Waktu Server:</p><p id="jamServer">--:--:--</p></div></div>
               <div>
-                <p class="text-2xl font-bold">Isi Kehadiran</p>
+                <p id="judulAbsen" class="text-2xl font-bold">Isi Kehadiran</p>
                 <p class="text-gray-300 text-sm">Pastikan perangkat terhubung ke jaringan kelas.</p>
               </div>
               <div class="mt-auto">
                 <div class="gap-3 flex flex-col">
                     <div class="flex flex-row w-full items-cente"><p class="font-bold">Masukkan NIM Kamu</p></div>
-                    <input class="bg-gray-800 w-full h-15 rounded-2xl input-kode text-center tracking-[1em] text-2xl" id="kode" name="kode" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" maxlength="6" required>
+                    <input class="bg-gray-800 w-full h-15 rounded-2xl input-kode text-center tracking-[1em] text-2xl" id="nim" name="kode" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" maxlength="6" required>
                     <small class="field-error" id="errKode"></small>
                 </div>
                 <div class="gap-3 flex flex-col">
@@ -83,14 +86,16 @@
                 </div>
                 <div class="flex flex-col mt-auto gap-3">
                   <label class="cek"><input type="checkbox" id="ingatNim" checked> Ingat NIM di perangkat ini</label>
-                  <button class="flex flex-row items-center justify-center text-xl gap-3 bg-green-400 w-full p-3 rounded-xl "><i class="fa-solid fa-circle-check"></i><p>Kirim</p></button>
+                  <button id="btnKirim" type="submit" class="flex flex-row items-center justify-center text-xl gap-3 bg-green-400 w-full p-3 rounded-xl "><i class="fa-solid fa-circle-check"></i><p>Kirim</p></button>
                 </div>
+                <small class="field-error" id="errNim"></small>
               </div>
             </form>
           </div>
         </div>
       </div>
     </section>
+    <!-- HERO RULES -->
     <section class="py-25 bg-gray-700/10 bg-dots flex items-center">
       <div class="bg-yellow-500/0 text-white mx-auto w-11/12 max-w-6xl md:w-4/6 z-10">
         <div class="pb-15 flex flex-col items-center justify-center">
@@ -148,9 +153,53 @@
         </div>
       </div>
     </section>
+    <!-- SUCCESS -->
+    <div class="h-dvh w-full fixed z-100 top-0 flex justify-center items-center p-8 md:p-0">
+      <div class="bg-gray-900/50 backdrop-blur-2xl overflow-hidden rounded-2xl w-120 min-h-[70%]">
+        <div class="flex flex-col gap-3">
+          <div class="gap-3 w-full flex flex-col items-center justify-center md:p-10 p-7 bg-gray-700">
+            <div class="bg-blue-300/15 rounded-full md:w-25 md:h-25 w-10 h-10 flex items-center justify-center">
+              <i class="text-blue-300 fa-solid fa-circle-check text-3xl md:text-7xl"></i>
+            </div>
+            <p class="font-bold md:text-2xl text-[18px]">Absen Berhasil</p>
+          </div>
+          <div class="p-5">
+            <div class="flex flex-col justify-center items-center">
+              <p class="font-bold">Username</p>
+              <div class="flex flex-row items-center justify-center gap-2">
+                <p>nim</p>
+                <div class="size-[4px] shrink-0 rounded-full bg-[#c9c6ff]"></div>
+                <p>class</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 grid-rows-3 divide-y border-white border rounded-2xl divide-white">
+              <div class="p-3 flex flex-row justify-between items-center">
+                <p class="text-gray-200">Mata Kuliah</p>
+                <p class="text-white font-bold overflow-auto max-w-[50%]">Mata Kuliah</p>
+              </div>
+              <div class="p-3 flex flex-row justify-between items-center">
+                <p class="text-gray-200">Waktu Dosen</p>
+                <div class="flex flex-col items-end">
+                  <p class="text-white font-bold overflow-auto">--:--:-- WIB</p>
+                  <p class="text-gray-300 overflow-auto text-sm">menit ke-30 sejak sesi dimulai</p>
+                </div>
+              </div>
+              <div class="p-3 flex flex-row justify-between items-center">
+                <p class="text-gray-200">Status</p>
+                <div>
+                  <p class="bg-white rounded-full px-5">Mata Kuliah</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <footer class="bg-black text-white h-30 flex flex-col items-center justify-center">
       <p>Web Absen Kampus Created By Han's</p>
       <p class="text-gray-500">Copyrights © 2026 All Rights Reserved</p>
     </footer>
+  <script src="./assets/js/app.js"></script>
+  <script src="./assets/js/absen.js"></script>
 </body>
 </html>
