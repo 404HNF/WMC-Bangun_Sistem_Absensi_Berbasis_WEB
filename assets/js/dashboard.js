@@ -1,146 +1,137 @@
-/* ==============================================================
-   DASHBOARD.JS - halaman beranda admin (admin/index.html)
-   Data diperbarui otomatis setiap 5 detik.
-   ============================================================== */
+let sessions = [];
+let fetchedAt = 0;
+let knownActivityKeys = null;
 
-let SESI = [];             // daftar sesi terakhir dari server
-let DIAMBIL = 0;           // waktu (performance.now) saat data diambil
-let FEED_LAMA = null;      // penanda absen yang sudah pernah tampil
+async function initDashboard() {
+  await setupAdminLayout();
+  document.getElementById('greeting').textContent = getGreeting();
+  document.getElementById('greeting_name').textContent = CURRENT_USER.full_name;
+  document.getElementById('today_label').textContent = formatTodayLong();
 
-async function mulai() {
-  await siapkanAdmin();
-  const kini = new Date();
-  document.getElementById('sapaan').textContent = sapaan();
-  document.getElementById('namaSapa').textContent = PENGGUNA.nama;
-  document.getElementById('tanggalHariIni').textContent =
-    `${HARI[kini.getDay()]}, ${kini.getDate()} ${BULAN[kini.getMonth()]} ${kini.getFullYear()}`;
-
-  ulangi(muatData, 5000);
-  setInterval(perbaruiHitungMundur, 1000);
+  startPolling(loadDashboard, 5000);
+  setInterval(updateCountdowns, 1000);
 }
 
-async function muatData() {
-  const [ringkas, sesi] = await Promise.all([api('dashboard.php'), api('sesi.php?aksi=daftar')]);
-  SESI = sesi;
-  DIAMBIL = performance.now();
+async function loadDashboard() {
+  const [overview, sessionList] = await Promise.all([
+    apiRequest('dashboard.php'),
+    apiRequest('sessions.php?action=list'),
+  ]);
+  sessions = sessionList;
+  fetchedAt = performance.now();
 
-  tampilkanRingkasan(ringkas, sesi);
-  tampilkanSesiAktif(sesi.filter(s => s.status === 'aktif'));
-  tampilkanFeed(ringkas.aktivitas);
-  tampilkanGrafik(sesi.filter(s => s.status !== 'akan_datang').slice(0, 8).reverse());
+  renderSummary(overview, sessionList);
+  renderActiveSessions(sessionList.filter(session => session.status === 'active'));
+  renderActivity(overview.recent_activity);
+  renderChart(sessionList.filter(session => session.status !== 'upcoming').slice(0, 8).reverse());
 }
 
+function renderSummary(overview, sessionList) {
+  const activeCount = sessionList.filter(session => session.status === 'active').length;
+  const upcomingCount = sessionList.filter(session => session.status === 'upcoming').length;
+  const closedSessions = sessionList.filter(session => session.status === 'closed');
 
-/* ---------- Ringkasan angka ---------- */
-function tampilkanRingkasan(r, sesi) {
-  const aktif = sesi.filter(s => s.status === 'aktif').length;
-  const akanDatang = sesi.filter(s => s.status === 'akan_datang').length;
-  const selesai = sesi.filter(s => s.status === 'selesai');
+  document.getElementById('student_count_value').textContent = overview.student_count;
+  document.getElementById('student_count_note').textContent = overview.class_count + ' kelas';
+  document.getElementById('active_count_value').textContent = activeCount;
+  document.getElementById('active_count_note').textContent = upcomingCount ? upcomingCount + ' sesi terjadwal' : 'Tidak ada sesi terjadwal';
+  document.getElementById('today_count_value').textContent = overview.present_today + overview.late_today;
+  document.getElementById('today_count_note').textContent = overview.present_today + ' hadir · ' + overview.late_today + ' terlambat';
 
-  document.getElementById('sMahasiswa').textContent = r.jumlah_mahasiswa;
-  document.getElementById('sMahasiswaSub').textContent = r.jumlah_kelas + ' kelas';
-
-  document.getElementById('sAktif').textContent = aktif;
-  document.getElementById('sAktifSub').textContent = akanDatang ? akanDatang + ' sesi terjadwal' : 'Tidak ada sesi terjadwal';
-
-  document.getElementById('sHariIni').textContent = r.hadir_hari_ini + r.terlambat_hari_ini;
-  document.getElementById('sHariIniSub').textContent = r.hadir_hari_ini + ' hadir · ' + r.terlambat_hari_ini + ' terlambat';
-
-  // Rata-rata kehadiran dari sesi yang sudah selesai
-  let datang = 0, seharusnya = 0;
-  selesai.forEach(s => { datang += Number(s.hadir) + Number(s.terlambat); seharusnya += Number(s.total); });
-  document.getElementById('sRata').textContent = seharusnya ? Math.round(datang / seharusnya * 100) + '%' : '–';
-  document.getElementById('sRataSub').textContent = 'dari ' + selesai.length + ' sesi selesai';
+  let attended = 0;
+  let expected = 0;
+  closedSessions.forEach(session => {
+    attended += session.present_count + session.late_count;
+    expected += session.student_total;
+  });
+  document.getElementById('average_value').textContent = expected ? Math.round(attended / expected * 100) + '%' : '–';
+  document.getElementById('average_note').textContent = 'dari ' + closedSessions.length + ' sesi selesai';
 }
 
-
-/* ---------- Sesi berlangsung ---------- */
-function tampilkanSesiAktif(daftar) {
-  const wadah = document.getElementById('daftarAktif');
-  if (!daftar.length) {
-    wadah.innerHTML = `
-      <div class="kosong">
-        <div class="kosong-ikon">${ikon('calendar', 24)}</div>
-        <h3>Belum ada sesi berlangsung</h3>
-        <p>Buat sesi untuk mendapatkan kode absen, lalu tampilkan kodenya di kelas.</p>
-        <a class="btn btn-utama btn-sm" href="sesi.html?buat=1">${ikon('plus', 16)}Buat Sesi</a>
-      </div>`;
+function renderActiveSessions(activeSessions) {
+  const container = document.getElementById('active_session_list');
+  if (!activeSessions.length) {
+    container.innerHTML = emptyState('calendar-plus', 'Belum ada sesi berlangsung',
+      'Buat sesi untuk mendapatkan kode absen, lalu tampilkan kodenya di kelas.',
+      `<a class="btn btn-primary btn-sm" href="sessions.html?create=1">${icon('plus')}Buat Sesi</a>`);
     return;
   }
-  wadah.innerHTML = daftar.map(s => `
-    <a class="item-aktif" href="sesi-detail.html?id=${s.id_sesi}">
-      <div>
-        <h3>${esc(s.mata_kuliah)}</h3>
-        <div class="item-aktif-meta">
-          <span>${ikon('clock', 13)} ${jamMenit(s.waktu_mulai)}–${jamMenit(s.waktu_tutup)} WIB</span>
-          <span><b>${Number(s.hadir) + Number(s.terlambat)}</b> / ${s.total} sudah absen</span>
-          <span class="hitung" data-id="${s.id_sesi}"></span>
+  container.innerHTML = activeSessions.map(session => `
+    <a class="flex flex-col gap-3 rounded-2xl border-2 border-gray-800 bg-gray-950/40 p-4 transition-all hover:border-blue-300/60" href="session-detail.html?session_id=${session.session_id}">
+      <div class="flex items-start justify-between gap-4">
+        <div class="min-w-0">
+          <h3 class="truncate text-lg font-bold">${escapeHtml(session.course_name)}</h3>
+          <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-400">
+            <span>${icon('clock', 'mr-1')}${formatClock(session.start_time)}–${formatClock(session.end_time)} WIB</span>
+            <span><b class="text-white">${session.present_count + session.late_count}</b> / ${session.student_total} sudah absen</span>
+            <span data-countdown="${session.session_id}"></span>
+          </div>
+        </div>
+        <div class="shrink-0 text-right">
+          <small class="text-xs font-bold tracking-wider text-gray-400 uppercase">Kode</small>
+          <p class="font-display text-2xl font-extrabold tracking-wider text-blue-300 tabular-nums">${formatSessionCode(session.session_code)}</p>
         </div>
       </div>
-      <div class="item-aktif-kode"><small>Kode</small><b>${formatKode(s.kode_sesi)}</b></div>
-      ${barTumpuk(s.hadir, s.terlambat, s.total)}
+      ${stackedBar(session.present_count, session.late_count, session.student_total)}
     </a>`).join('');
-  perbaruiHitungMundur();
+  updateCountdowns();
 }
 
-function perbaruiHitungMundur() {
-  document.querySelectorAll('.hitung[data-id]').forEach(el => {
-    const sesi = SESI.find(s => String(s.id_sesi) === el.dataset.id);
-    if (!sesi) return;
-    const f = faseSesi(sesi, DIAMBIL, PENGGUNA.batas_hadir);
-    if (f.fase === 'hadir') el.innerHTML = `Tepat waktu · <b>${hitungMundur(f.sisa)}</b> lagi`;
-    else if (f.fase === 'terlambat') el.innerHTML = `Ditutup dalam <b>${hitungMundur(f.sisa)}</b>`;
-    else el.textContent = 'Absen ditutup';
+function updateCountdowns() {
+  document.querySelectorAll('[data-countdown]').forEach(element => {
+    const session = sessions.find(item => String(item.session_id) === element.dataset.countdown);
+    if (!session) return;
+    const phase = getSessionPhase(session, fetchedAt, CURRENT_USER.on_time_minutes);
+    if (phase.phase === 'present') element.innerHTML = `Tepat waktu · <b class="text-emerald-300 tabular-nums">${formatCountdown(phase.remaining)}</b> lagi`;
+    else if (phase.phase === 'late') element.innerHTML = `Ditutup dalam <b class="text-amber-200 tabular-nums">${formatCountdown(phase.remaining)}</b>`;
+    else element.textContent = 'Absen ditutup';
   });
 }
 
-
-/* ---------- Absen terbaru ---------- */
-function tampilkanFeed(daftar) {
-  const wadah = document.getElementById('feed');
-  if (!daftar.length) {
-    wadah.innerHTML = `<div class="kosong"><div class="kosong-ikon">${ikon('user-check', 24)}</div><h3>Belum ada absen</h3><p>Kehadiran yang masuk akan tampil di sini.</p></div>`;
+function renderActivity(activities) {
+  const container = document.getElementById('activity_feed');
+  if (!activities.length) {
+    container.innerHTML = emptyState('user-check', 'Belum ada absen', 'Kehadiran yang masuk akan tampil di sini.');
     return;
   }
-  const kunci = a => a.nim + a.waktu_absen;
-  wadah.innerHTML = daftar.map(a => `
-    <div class="feed-item ${FEED_LAMA && !FEED_LAMA.has(kunci(a)) ? 'baru' : ''}">
-      <span class="avatar avatar-sm">${esc(inisial(a.nama))}</span>
-      <div class="teks">
-        <b>${esc(a.nama)}</b>
-        <small>${esc(a.mata_kuliah)} · ${waktuLalu(a.detik_lalu)}</small>
+  const keyOf = activity => activity.student_nim + activity.checked_in_at;
+  container.innerHTML = activities.map(activity => `
+    <div class="flex items-center gap-3 rounded-2xl px-3 py-2.5 ${knownActivityKeys && !knownActivityKeys.has(keyOf(activity)) ? 'animate-flash' : ''}">
+      <span class="avatar avatar-sm">${escapeHtml(getInitials(activity.student_name))}</span>
+      <div class="flex min-w-0 flex-1 flex-col">
+        <b class="truncate text-sm">${escapeHtml(activity.student_name)}</b>
+        <small class="truncate text-xs text-gray-400">${escapeHtml(activity.course_name)} · ${formatTimeAgo(activity.seconds_ago)}</small>
       </div>
-      ${badge(a.status)}
+      ${statusBadge(activity.status)}
     </div>`).join('');
-  FEED_LAMA = new Set(daftar.map(kunci));
+  knownActivityKeys = new Set(activities.map(keyOf));
 }
 
-
-/* ---------- Grafik kehadiran per sesi ---------- */
-function tampilkanGrafik(daftar) {
-  const wadah = document.getElementById('grafik');
-  if (!daftar.length) {
-    wadah.innerHTML = `<div class="kosong" style="flex:1"><p>Grafik muncul setelah ada sesi.</p></div>`;
+function renderChart(chartSessions) {
+  const container = document.getElementById('attendance_chart');
+  if (!chartSessions.length) {
+    container.innerHTML = '<p class="w-full self-center text-center text-sm text-gray-400">Grafik muncul setelah ada sesi.</p>';
     return;
   }
-  wadah.innerHTML = daftar.map(s => {
-    const total = Number(s.total) || 0;
-    const hadir = Number(s.hadir), terlambat = Number(s.terlambat);
-    const tidak = s.status === 'selesai' ? Math.max(0, total - hadir - terlambat) : 0;
-    const persen = total ? Math.round((hadir + terlambat) / total * 100) : 0;
-    const tinggi = n => (total ? n / total * 100 : 0) + '%';
+  container.innerHTML = chartSessions.map(session => {
+    const total = session.student_total;
+    const present = session.present_count;
+    const late = session.late_count;
+    const absent = session.status === 'closed' ? Math.max(0, total - present - late) : 0;
+    const percent = total ? Math.round((present + late) / total * 100) : 0;
+    const height = count => (total ? count / total * 100 : 0) + '%';
+    const title = `${session.course_name} · ${formatLongDate(session.start_time)}\n${present} hadir, ${late} terlambat, ${absent} tidak hadir`;
     return `
-      <a class="grafik-kolom" href="sesi-detail.html?id=${s.id_sesi}"
-         title="${esc(s.mata_kuliah)} · ${tanggalPanjang(s.waktu_mulai)}&#10;${hadir} hadir, ${terlambat} terlambat, ${tidak} tidak hadir">
-        <span class="grafik-persen">${persen}%</span>
-        <span class="grafik-batang">
-          <span class="seg-hadir" style="height:${tinggi(hadir)}"></span>
-          <span class="seg-terlambat" style="height:${tinggi(terlambat)}"></span>
-          <span class="seg-tidak" style="height:${tinggi(tidak)}"></span>
+      <a class="group flex h-full min-w-12 flex-1 flex-col items-center gap-2" href="session-detail.html?session_id=${session.session_id}" title="${escapeHtml(title)}">
+        <span class="text-xs font-bold text-gray-300">${percent}%</span>
+        <span class="flex w-full max-w-12 flex-1 flex-col-reverse overflow-hidden rounded-xl bg-gray-800/60 transition-opacity group-hover:opacity-80">
+          <span class="seg-present" style="height:${height(present)}"></span>
+          <span class="seg-late" style="height:${height(late)}"></span>
+          <span class="seg-absent" style="height:${height(absent)}"></span>
         </span>
-        <span class="grafik-label"><b>${esc(singkatan(s.mata_kuliah))}</b>${tanggalSingkat(s.waktu_mulai)}</span>
+        <span class="flex flex-col items-center text-[11px] leading-tight text-gray-400"><b class="text-gray-200">${escapeHtml(getCourseAbbreviation(session.course_name))}</b>${formatDayMonth(session.start_time)}</span>
       </a>`;
   }).join('');
 }
 
-mulai().catch(err => toast(err.message, 'gagal'));
+initDashboard().catch(error => showToast(error.message, 'error'));
