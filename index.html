@@ -1,205 +1,251 @@
 <!doctype html>
-<html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="description" content="Sistem absensi kelas berbasis web Universitas Bina Bangsa Getsempena.">
+  <title>Absensi Kelas · Universitas Bina Bangsa Getsempena</title>
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="./src/output.css" rel="stylesheet">
-  <link href="./src/input.css" rel="stylesheet">
+  <link rel="stylesheet" href="src/output.css">
 </head>
-<body class="bg-gray-950">
-    <div class="flex justify-between items-center fixed top-5 z-50 mx-auto w-full min-h-18 px-6">
-        <div class="bg-blue-300/10 backdrop-blur-3xl p-5 rounded-full flex justify-between items-center fixed inset-x-0 mx-auto w-11/12 max-w-6xl h-15 md:w-4/6">
-            <div class="flex-1">
-            <img draggable="false" oncontextmenu="return false;" class="h-8 select-none" src="./src/hans_projects_logo.png">
-            </div>
-            <ul class="hidden md:pointer-coarse:hidden md:flex gap-15">
-                <li>
-                    <a class="hrznHeaderNav" href="index.html">Absen</a>
-                </li>
-                <li>
-                    <a class="hrznHeaderNav" href="rules.html">Aturan</a>
-                </li>
-                <li>
-                    <a class="hrznHeaderNav" href="shop.html">Cara Absen?</a>
-                </li>
-            </ul>
-            <span class="flex flex-1 justify-end">
-                <button class="rounded-full bg-gray-500/30 border-gray-500 text-white font-bold border-2 py-2 px-3 flex flex-row justify-center items-center gap-3"><i class="fa-solid fa-right-to-bracket"></i><p>Login Dosen</p></button>
-            </span>
-        </div>
+<body data-area="public" data-page="index" class="flex min-h-dvh flex-col">
+  <header class="fixed inset-x-0 top-5 z-50">
+    <nav class="page-width flex h-15 items-center rounded-full bg-blue-300/10 px-3 backdrop-blur-3xl sm:px-5" aria-label="Menu utama">
+      <div class="flex flex-1 items-center">
+        <a href="index.html" class="flex items-center" aria-label="Halaman absen">
+          <img data-logo draggable="false" class="h-8 select-none" src="src/hans_projects_logo.png" alt="Han's Projects">
+        </a>
+      </div>
+      <ul class="hidden md:flex md:gap-8 md:pointer-coarse:hidden xl:gap-15">
+        <li><a class="nav-link" href="index.html" aria-current="page">Absen</a></li>
+        <li><a class="nav-link" href="rules.html">Aturan</a></li>
+        <li><a class="nav-link" href="guide.html">Cara Absen?</a></li>
+      </ul>
+      <div class="flex flex-1 items-center justify-end gap-2">
+        <a href="admin/login.html" class="btn btn-login gap-3" aria-label="Login Dosen"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span class="hidden sm:inline">Login Dosen</span></a>
+        <button type="button" id="menu_button" class="icon-button md:hidden md:pointer-coarse:inline-grid" aria-expanded="false" aria-controls="mobile_menu" aria-label="Buka menu"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+      </div>
+    </nav>
+    <div id="mobile_menu" class="page-width mt-3 flex flex-col gap-1 rounded-3xl border-2 border-gray-800 bg-gray-900/95 p-2 backdrop-blur-3xl md:hidden md:pointer-coarse:flex" hidden>
+      <a class="mobile-link" href="index.html" aria-current="page"><i class="fa-solid fa-clipboard-check w-5 text-center" aria-hidden="true"></i>Absen</a>
+      <a class="mobile-link" href="rules.html"><i class="fa-solid fa-scale-balanced w-5 text-center" aria-hidden="true"></i>Aturan</a>
+      <a class="mobile-link" href="guide.html"><i class="fa-solid fa-circle-question w-5 text-center" aria-hidden="true"></i>Cara Absen?</a>
+      <a class="mobile-link border-t-2 border-gray-800" href="admin/login.html"><i class="fa-solid fa-right-to-bracket w-5 text-center" aria-hidden="true"></i>Login Dosen</a>
     </div>
-    <!-- HERO -->
-    <section class="md:h-dvh py-25 bg-red-500/0 flex items-center bg-dots">
-      <div class="bg-yellow-500/0 text-white mx-auto w-11/12 max-w-6xl md:w-4/6 z-10">
-        <div class="grid md:grid-cols-[1fr_50%] grid-cols-1 gap-10">
-          <div class="flex flex-col gap-3 md:items-start items-center justify-center">
-          <span class="pil-status" id="pilStatus"><i class="titik"></i><span id="teksStatus">Memeriksa sesi…</span></span>
-          <div class="alert" id="pesanGagal" role="alert" hidden></div>
-            <img src="./assets/ubbg_logo.png" class="w-30">
-            <p class="hidden md:block text-5xl font-bold">Absen Kelas</p>
-            <p class="hidden md:block text-4xl font-bold">Cepat, Tepat, tanpa Kertas!</p>
-            <p class="hidden md:block text-xl">Sambungkan HP ke Wi-Fi kelas, lalu masukkan NIM dan kode sesi 6 digit dari dosen. Status kehadiran ditentukan otomatis oleh server.</p>
-            <div class="hidden md:flex flex-row gap-3 py-10">
-              <div>
-                <p class="font-bold text-4xl">≤ 15</p>
-                <div class="flex flex-row justify-center items-center gap-3 text-red-200">
-                  <div class="size-[7px] shrink-0 rounded-full bg-[#c9c6ff]"></div>
-                  <p class="font-bold text-sm">Menit - Hadir</p>
+  </header>
+
+  <main>
+    <section id="attendance" class="flex items-center bg-dots pt-28 pb-16 md:min-h-dvh md:pt-32 md:pb-20">
+      <div class="page-width">
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-[1fr_50%] md:gap-10">
+          <div class="flex flex-col items-center justify-center gap-4 text-center md:items-start md:text-left">
+            <span class="status-pill" id="session_status" data-state="loading">
+              <span class="status-dot"></span>
+              <span id="session_status_text">Memeriksa sesi…</span>
+            </span>
+            <img src="assets/img/ubbg-logo-white.png" alt="Logo Universitas Bina Bangsa Getsempena" class="w-20 select-none md:w-30" draggable="false">
+            <h1 class="font-display text-4xl font-extrabold md:text-5xl">Absen Kelas</h1>
+            <p class="font-display text-2xl font-bold text-balance text-blue-200 md:text-4xl">Cepat, Tepat, tanpa Kertas!</p>
+            <p class="hidden text-lg text-gray-300 md:block">Sambungkan HP ke internet, lalu masukkan NIM dan kode sesi 6 digit dari dosen. Status kehadiran ditentukan otomatis oleh server.</p>
+            <div class="hidden w-full flex-col gap-3 pt-6 md:flex">
+              <p class="text-xs font-bold tracking-widest text-gray-400 uppercase">Menit sejak sesi dimulai</p>
+              <dl class="flex flex-wrap gap-y-3 divide-x divide-white/15">
+                <div class="flex flex-col gap-1 pr-3 xl:pr-5">
+                  <dt class="font-display text-3xl font-bold whitespace-nowrap xl:text-4xl">≤ <span data-fill="on_time_minutes">15</span></dt>
+                  <dd class="flex items-center gap-2 text-xs font-bold whitespace-nowrap text-gray-300 xl:text-sm"><span class="legend-dot bg-emerald-400"></span>Hadir</dd>
                 </div>
-              </div>
-              <div class="w-px shrink-0 self-stretch bg-white/15"></div>
-              <div>
-                <p class="font-bold text-4xl">15-30</p>
-                <div class="flex flex-row justify-center items-center gap-3 text-red-200">
-                  <div class="size-[7px] shrink-0 rounded-full bg-[#c9c6ff]"></div>
-                  <p class="font-bold text-sm">Menit - Hadir</p>
+                <div class="flex flex-col gap-1 px-3 xl:px-5">
+                  <dt class="font-display text-3xl font-bold whitespace-nowrap xl:text-4xl"><span data-fill="on_time_minutes">15</span>–<span data-fill="default_duration">30</span></dt>
+                  <dd class="flex items-center gap-2 text-xs font-bold whitespace-nowrap text-gray-300 xl:text-sm"><span class="legend-dot bg-amber-300"></span>Terlambat</dd>
                 </div>
-              </div>
-              <div class="w-px shrink-0 self-stretch bg-white/15"></div>
-              <div>
-                <p class="font-bold text-4xl">> 30</p>
-                <div class="flex flex-row justify-center items-center gap-3 text-red-200">
-                  <div class="size-[7px] shrink-0 rounded-full bg-[#c9c6ff]"></div>
-                  <p class="font-bold text-sm">Menit - Hadir</p>
+                <div class="flex flex-col gap-1 pl-3 xl:pl-5">
+                  <dt class="font-display text-3xl font-bold whitespace-nowrap xl:text-4xl">&gt; <span data-fill="default_duration">30</span></dt>
+                  <dd class="flex items-center gap-2 text-xs font-bold whitespace-nowrap text-gray-300 xl:text-sm"><span class="legend-dot bg-red-400"></span>Tidak hadir</dd>
                 </div>
-              </div>
+              </dl>
             </div>
           </div>
-          <div class="flex justify-end items-end">
-            <form id="formAbsen" novalidate class="flex flex-col gap-5 bg-gray-900/40 border-2 border-gray-800 rounded-2xl px-8 py-10">
-              <div class="flex w-full justify-end"><div class="flex flex-row gap-2 items-center w-fit px-3 py-1.5 mb-auto rounded-full bg-red-500"><i class="fa-solid fa-clock"></i><p>Waktu Server:</p><p id="jamServer">--:--:--</p></div></div>
+
+          <div class="flex items-end justify-center md:justify-end">
+            <form id="attendance_form" class="card flex w-full flex-col gap-5 px-6 py-8 md:px-8 md:py-10" novalidate>
+              <div class="flex justify-end">
+                <span class="inline-flex items-center gap-2 rounded-full bg-blue-300/15 px-3 py-1.5 text-sm font-semibold text-blue-100" title="Waktu server">
+                  <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                  <span>Waktu Server:</span>
+                  <b id="server_clock" class="tabular-nums">--:--:--</b>
+                </span>
+              </div>
               <div>
-                <p id="judulAbsen" class="text-2xl font-bold">Isi Kehadiran</p>
-                <p class="text-gray-300 text-sm">Pastikan perangkat terhubung ke jaringan kelas.</p>
+                <h2 id="attendance_title" class="text-2xl font-bold">Isi Kehadiran</h2>
+                <p class="text-sm text-gray-300">Pastikan perangkat terhubung ke internet.</p>
               </div>
-              <div class="mt-auto">
-                <div class="gap-3 flex flex-col">
-                    <div class="flex flex-row w-full items-cente"><p class="font-bold">Masukkan NIM Kamu</p></div>
-                    <input class="bg-gray-800 w-full h-15 rounded-2xl input-kode text-center tracking-[1em] text-2xl" id="nim" name="kode" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" maxlength="6" required>
-                    <small class="field-error" id="errKode"></small>
-                </div>
-                <div class="gap-3 flex flex-col">
-                    <div class="flex flex-row w-full items-center"><p class="font-bold">Kode Sesi</p><small class="ml-auto text-end">6 digit dari dosen</small></div>
-                    <input class="bg-gray-800 w-full h-15 rounded-2xl input-kode text-center tracking-[1em] text-2xl" id="kode" name="kode" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" maxlength="6" required>
-                    <small class="field-error" id="errKode"></small>
-                </div>
-                <div class="flex flex-col mt-auto gap-3">
-                  <label class="cek"><input type="checkbox" id="ingatNim" checked> Ingat NIM di perangkat ini</label>
-                  <button id="btnKirim" type="submit" class="flex flex-row items-center justify-center text-xl gap-3 bg-green-400 w-full p-3 rounded-xl "><i class="fa-solid fa-circle-check"></i><p>Kirim</p></button>
-                </div>
-                <small class="field-error" id="errNim"></small>
+              <div class="field">
+                <label class="field-label" for="student_nim">Masukkan NIM Kamu</label>
+                <input class="input input-big tracking-[0.2em]" id="student_nim" name="student_nim" type="text" inputmode="numeric" autocomplete="off" placeholder="23210134" maxlength="20" aria-describedby="student_nim_error" required>
+                <small class="field-error" id="student_nim_error"></small>
               </div>
+              <div class="field">
+                <div class="flex items-center gap-3">
+                  <label class="field-label" for="session_code">Kode Sesi</label>
+                  <small class="field-hint ml-auto">6 digit dari dosen</small>
+                </div>
+                <input class="input input-big tracking-[0.5em]" id="session_code" name="session_code" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" maxlength="6" aria-describedby="session_code_error" required>
+                <small class="field-error" id="session_code_error"></small>
+              </div>
+              <label class="flex cursor-pointer items-center gap-3 text-sm font-medium text-gray-300" for="remember_nim">
+                <input class="checkbox" type="checkbox" id="remember_nim" checked>
+                Ingat NIM di perangkat ini
+              </label>
+              <div class="alert-error" id="attendance_error" role="alert" hidden></div>
+              <button id="submit_button" type="submit" class="btn btn-primary btn-lg w-full text-lg">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>Kirim Absen</span>
+              </button>
             </form>
           </div>
         </div>
       </div>
     </section>
-    <!-- HERO RULES -->
-    <section class="py-25 bg-gray-700/10 bg-dots flex items-center">
-      <div class="bg-yellow-500/0 text-white mx-auto w-11/12 max-w-6xl md:w-4/6 z-10">
-        <div class="pb-15 flex flex-col items-center justify-center">
-          <p class="font-bold text-4xl text-blue-200">Rules</p>
-          <p class="text-xl">Mahasiswa Harus mematuhi Aturan Dibawah</p>
+
+    <section id="rules" class="bg-dots bg-gray-700/10 py-20 md:py-25">
+      <div class="page-width">
+        <div class="flex flex-col items-center justify-center gap-2 pb-12 text-center">
+          <h2 class="font-display text-4xl font-bold text-blue-200">Rules</h2>
+          <p class="text-lg text-gray-300 md:text-xl">Mahasiswa harus mematuhi aturan di bawah ini</p>
         </div>
-        <div class="grid grid-rows-[auto_1fr] gap-4 grid-cols-1 md:grid-cols-3">
-          <!--  ATURAN -->
-          <div class="rulesAbsen">
-            <div class="bg-green-200 w-fit rounded-xl">
-              <i class="text p-5 text-xl text-green-600 fa-solid fa-circle-check"></i>
-            </div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <article class="rule-card">
+            <span class="grid size-14 place-items-center rounded-xl bg-green-200 text-xl text-green-600"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
             <div>
-              <p class="text-2xl font-bold">Tepat Waktu</p>
-              <p class="text-[16px]">Selalu absen tepat waktu agar dosen tidak marah:)</p>
+              <h3 class="text-2xl font-bold">Tepat Waktu</h3>
+              <p class="text-gray-300">Selalu absen tepat waktu agar dosen tidak marah :)</p>
             </div>
-          </div>
-          <div class="rulesAbsen">
-            <div class="bg-yellow-200 w-fit rounded-xl">
-              <i class="text p-5 text-xl text-yellow-600 fa-solid fa-clock"></i>
-            </div>
+          </article>
+          <article class="rule-card">
+            <span class="grid size-14 place-items-center rounded-xl bg-yellow-200 text-xl text-yellow-600"><i class="fa-solid fa-clock" aria-hidden="true"></i></span>
             <div>
-              <p class="text-2xl font-bold">Batas 15 Menit</p>
-              <p class="text-[16px]">Absen di 15 menit pertama tercatat hadir, lewat dari itu tercatat terlambat.</p>
+              <h3 class="text-2xl font-bold">Batas <span data-fill="on_time_minutes">15</span> Menit</h3>
+              <p class="text-gray-300">Absen di <span data-fill="on_time_minutes">15</span> menit pertama tercatat hadir, lewat dari itu tercatat terlambat.</p>
             </div>
-          </div>
-          <div class="rulesAbsen">
-            <div class="bg-blue-200 w-fit rounded-xl">
-              <i class="text p-5 text-xl text-blue-600 fa-solid fa-key"></i>
-            </div>
+          </article>
+          <article class="rule-card">
+            <span class="grid size-14 place-items-center rounded-xl bg-blue-200 text-xl text-blue-600"><i class="fa-solid fa-key" aria-hidden="true"></i></span>
             <div>
-              <p class="text-2xl font-bold">Pakai NIM Sendiri</p>
-              <p class="text-[16px]">Satu NIM hanya bisa absen satu kali di setiap sesi, jadi pastikan NIM-mu benar.</p>
+              <h3 class="text-2xl font-bold">Pakai NIM Sendiri</h3>
+              <p class="text-gray-300">Satu NIM hanya bisa absen satu kali di setiap sesi, jadi pastikan NIM-mu benar.</p>
             </div>
-          </div>
-          <div class="rulesAbsen">
-            <div class="bg-red-200 w-fit rounded-xl">
-              <i class="text p-5 text-xl text-red-600 fa-solid fa-triangle-exclamation"></i>
-            </div>
+          </article>
+          <article class="rule-card">
+            <span class="grid size-14 place-items-center rounded-xl bg-red-200 text-xl text-red-600"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
             <div>
-              <p class="text-2xl font-bold">Dilarang Titip Absen</p>
-              <p class="text-[16px]">Jangan absen untuk teman. Absen yang tidak sah akan dihapus oleh dosen.</p>
+              <h3 class="text-2xl font-bold">Dilarang Titip Absen</h3>
+              <p class="text-gray-300">Jangan absen untuk teman. Absen yang tidak sah akan dihapus oleh dosen.</p>
             </div>
-          </div>
-          <div class="rulesAbsen">
-            <div class="bg-purple-200 w-fit rounded-xl">
-              <i class="text p-5 text-xl text-purple-600 fa-solid fa-shield-halved"></i>
-            </div>
+          </article>
+          <article class="rule-card">
+            <span class="grid size-14 place-items-center rounded-xl bg-purple-200 text-xl text-purple-600"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
             <div>
-              <p class="text-2xl font-bold">Kode dari Dosen</p>
-              <p class="text-[16px]">Kode 6 digit hanya diberikan di kelas. Jangan bagikan ke teman yang tidak hadir.</p>
+              <h3 class="text-2xl font-bold">Kode dari Dosen</h3>
+              <p class="text-gray-300">Kode 6 digit hanya diberikan di kelas. Jangan bagikan ke teman yang tidak hadir.</p>
             </div>
-          </div>
-          <!--  -->
+          </article>
+          <a href="rules.html" class="rule-card justify-center border-dashed text-gray-300 hover:border-blue-300 hover:text-blue-200">
+            <span class="grid size-14 place-items-center rounded-xl bg-gray-800 text-xl text-blue-300"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            <div>
+              <h3 class="text-2xl font-bold text-white">Aturan Lengkap</h3>
+              <p>Lihat semua aturan, status kehadiran, dan aturan untuk dosen.</p>
+            </div>
+          </a>
         </div>
       </div>
     </section>
-    <!-- SUCCESS -->
-    <div class="h-dvh w-full hidden z-100 top-0 flex justify-center items-center p-8 md:p-0">
-      <div class="bg-gray-900/50 backdrop-blur-2xl overflow-hidden rounded-2xl w-120 min-h-[70%]">
-        <div class="flex flex-col gap-3">
-          <div class="gap-3 w-full flex flex-col items-center justify-center md:p-10 p-7 bg-gray-700">
-            <div class="bg-blue-300/15 rounded-full md:w-25 md:h-25 w-10 h-10 flex items-center justify-center">
-              <i class="text-blue-300 fa-solid fa-circle-check text-3xl md:text-7xl"></i>
-            </div>
-            <p class="font-bold md:text-2xl text-[18px]">Absen Berhasil</p>
+  </main>
+
+  <div class="modal" id="result_modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel max-w-lg" role="dialog" aria-modal="true" aria-labelledby="result_title">
+      <div class="overflow-y-auto">
+        <div class="flex flex-col items-center gap-3 bg-gray-800 px-7 py-8 text-center md:py-10">
+          <span id="result_icon" class="grid size-16 place-items-center rounded-full bg-blue-300/15 text-3xl text-blue-300 md:size-24 md:text-5xl">
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          </span>
+          <h2 id="result_title" class="text-xl font-bold md:text-2xl">Absen Berhasil</h2>
+        </div>
+        <div class="flex flex-col gap-5 p-5 md:p-6">
+          <div class="flex flex-col items-center text-center">
+            <p id="result_name" class="text-lg font-bold">Nama</p>
+            <p id="result_identity" class="flex items-center gap-2 text-sm text-gray-300">NIM · Kelas</p>
           </div>
-          <div class="p-5">
-            <div class="flex flex-col justify-center items-center">
-              <p id="username" class="font-bold">Username</p>
-              <div class="flex flex-row items-center justify-center gap-2">
-                <p>nim</p>
-                <div class="size-[4px] shrink-0 rounded-full bg-[#c9c6ff]"></div>
-                <p>class</p>
-              </div>
+          <dl class="divide-y-2 divide-gray-800 rounded-2xl border-2 border-gray-800">
+            <div class="flex items-center justify-between gap-4 p-3">
+              <dt class="shrink-0 text-gray-300">Mata Kuliah</dt>
+              <dd id="result_course" class="text-right font-bold">-</dd>
             </div>
-            <div class="grid grid-cols-1 grid-rows-3 divide-y border-white border rounded-2xl divide-white">
-              <div class="p-3 flex flex-row justify-between items-center">
-                <p class="text-gray-200">Mata Kuliah</p>
-                <p class="text-white font-bold overflow-auto max-w-[50%]">Mata Kuliah</p>
-              </div>
-              <div class="p-3 flex flex-row justify-between items-center">
-                <p class="text-gray-200">Waktu Dosen</p>
-                <div class="flex flex-col items-end">
-                  <p class="text-white font-bold overflow-auto">--:--:-- WIB</p>
-                  <p class="text-gray-300 overflow-auto text-sm">menit ke-30 sejak sesi dimulai</p>
-                </div>
-              </div>
-              <div class="p-3 flex flex-row justify-between items-center">
-                <p class="text-gray-200">Status</p>
-                <div>
-                  <p class="bg-white rounded-full px-5">Mata Kuliah</p>
-                </div>
-              </div>
+            <div class="flex items-center justify-between gap-4 p-3">
+              <dt class="shrink-0 text-gray-300">Waktu Absen</dt>
+              <dd class="flex flex-col items-end text-right">
+                <b id="result_time">--:--:-- WIB</b>
+                <small id="result_minute" class="text-sm text-gray-400"></small>
+              </dd>
             </div>
+            <div class="flex items-center justify-between gap-4 p-3">
+              <dt class="shrink-0 text-gray-300">Status</dt>
+              <dd id="result_status"></dd>
+            </div>
+          </dl>
+
+          <div class="tab-list flex-nowrap" role="tablist" id="result_tabs" aria-label="Detail kehadiran">
+            <button type="button" class="tab flex-1 px-3" role="tab" id="my_attendance_tab" aria-controls="my_attendance_panel" aria-selected="true">Kehadiran Saya</button>
+            <button type="button" class="tab flex-1 px-3" role="tab" id="classmates_tab" aria-controls="classmates_panel" aria-selected="false" tabindex="-1">Anggota Kelas <span class="count" id="classmate_count">0</span></button>
           </div>
+
+          <section id="my_attendance_panel" role="tabpanel" aria-labelledby="my_attendance_tab" class="flex flex-col gap-4 rounded-2xl border-2 border-gray-800 p-4">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <small class="text-sm text-gray-400">Jumlah absen di <b id="summary_course" class="text-gray-200"></b></small>
+                <p class="font-display text-3xl font-extrabold"><span id="summary_attended">0</span> <span class="text-base font-semibold text-gray-400">/ <span id="summary_meetings">0</span> pertemuan</span></p>
+              </div>
+              <div id="summary_ring"></div>
+            </div>
+            <div class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-300">
+              <span class="flex items-center gap-2"><span class="legend-dot bg-emerald-400"></span>Hadir <b id="summary_present" class="text-white">0</b></span>
+              <span class="flex items-center gap-2"><span class="legend-dot bg-amber-300"></span>Terlambat <b id="summary_late" class="text-white">0</b></span>
+              <span class="flex items-center gap-2"><span class="legend-dot bg-red-400"></span>Tidak hadir <b id="summary_absent" class="text-white">0</b></span>
+            </div>
+            <div>
+              <p class="mb-2 text-xs font-bold tracking-wider text-gray-400 uppercase">Riwayat pertemuan</p>
+              <div class="flex flex-wrap gap-2" id="summary_history"></div>
+            </div>
+          </section>
+
+          <section id="classmates_panel" role="tabpanel" aria-labelledby="classmates_tab" class="flex flex-col gap-3" hidden>
+            <p class="alert-info"><i class="fa-solid fa-circle-info mt-0.5" aria-hidden="true"></i><span id="classmates_note"></span></p>
+            <ul class="flex max-h-72 flex-col gap-1 overflow-y-auto pr-1" id="classmate_list"></ul>
+          </section>
+
+          <button type="button" class="btn btn-secondary btn-lg w-full" id="done_button">Selesai</button>
         </div>
       </div>
     </div>
-    <footer class="bg-black text-white h-30 flex flex-col items-center justify-center">
-      <p>Web Absen Kampus Created By Han's</p>
-      <p class="text-gray-500">Copyrights © 2026 All Rights Reserved</p>
-    </footer>
-  <script src="./assets/js/app.js"></script>
-  <script src="./assets/js/absen.js"></script>
+  </div>
+
+  <footer class="mt-auto bg-black">
+    <div class="page-width flex flex-col items-center gap-5 py-12 text-center">
+      <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-semibold text-gray-400" aria-label="Tautan halaman">
+        <a class="transition-all hover:text-blue-300" href="index.html">Absen</a>
+        <a class="transition-all hover:text-blue-300" href="rules.html">Aturan</a>
+        <a class="transition-all hover:text-blue-300" href="guide.html">Cara Absen?</a>
+        <a class="transition-all hover:text-blue-300" href="staff.html">Staff</a>
+      </nav>
+      <div class="flex flex-col gap-1">
+        <p class="font-semibold text-white">Web Absen Kampus Created By Han's</p>
+        <p class="text-sm text-gray-500">Copyrights © 2026 All Rights Reserved</p>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/attendance.js"></script>
 </body>
 </html>
