@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="robots" content="noindex">
+  <title>Sesi Kuliah · Absensi UBBG</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../src/output.css">
+</head>
+<body data-area="admin" data-page="sessions" class="min-h-dvh bg-dots pb-28 lg:pb-16">
+  <header id="admin_header" class="fixed inset-x-0 top-5 z-50"></header>
+
+  <main class="admin-width flex flex-col gap-6 pt-32">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-bold tracking-widest text-blue-300 uppercase">Sesi kuliah</span>
+        <h1 class="font-display text-3xl font-extrabold md:text-4xl">Sesi &amp; kode absen</h1>
+        <p class="max-w-2xl text-gray-400">Buat sesi untuk mendapatkan kode 6 digit, tampilkan di kelas, lalu pantau kehadiran secara langsung.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="btn btn-primary" id="create_session_button"><i class="fa-solid fa-plus" aria-hidden="true"></i>Buat Sesi</button>
+      </div>
+    </div>
+
+    <section class="card flex flex-col">
+      <div class="flex flex-col gap-3 border-b-2 border-gray-800 p-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="tab-list" role="group" aria-label="Saring status sesi" id="status_filter">
+          <button type="button" class="tab px-4 py-2" data-value="all" aria-pressed="true">Semua <span class="count" id="count_all">0</span></button>
+          <button type="button" class="tab px-4 py-2" data-value="active" aria-pressed="false">Berlangsung <span class="count" id="count_active">0</span></button>
+          <button type="button" class="tab px-4 py-2" data-value="upcoming" aria-pressed="false">Terjadwal <span class="count" id="count_upcoming">0</span></button>
+          <button type="button" class="tab px-4 py-2" data-value="closed" aria-pressed="false">Selesai <span class="count" id="count_closed">0</span></button>
+        </div>
+        <label class="search-box">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input type="search" id="session_search" placeholder="Cari mata kuliah atau kode…" aria-label="Cari sesi">
+        </label>
+      </div>
+      <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 xl:grid-cols-3" id="session_list">
+        <div class="skeleton h-52"></div>
+        <div class="skeleton h-52"></div>
+        <div class="skeleton h-52"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="session_modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="session_modal_title">
+      <div class="modal-header">
+        <div>
+          <h2 id="session_modal_title" class="font-display text-xl font-extrabold">Buat Sesi Baru</h2>
+          <p class="text-sm text-gray-400">Kode 6 digit dibuat otomatis oleh sistem.</p>
+        </div>
+        <button type="button" class="icon-button" data-close aria-label="Tutup"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      </div>
+      <form id="session_form" class="flex min-h-0 flex-col" novalidate>
+        <div class="modal-body">
+          <div class="field">
+            <label class="field-label" for="course_name">Mata kuliah</label>
+            <input class="input" id="course_name" name="course_name" list="course_suggestions" maxlength="100" placeholder="Contoh: Wireless/Mobile Computing" autocomplete="off" required>
+            <datalist id="course_suggestions"></datalist>
+          </div>
+          <div class="field">
+            <span class="field-label">Waktu mulai</span>
+            <div class="tab-list" role="group" aria-label="Pilih waktu mulai" id="start_mode">
+              <button type="button" class="tab flex-1" data-value="now" aria-pressed="true">Mulai sekarang</button>
+              <button type="button" class="tab flex-1" data-value="scheduled" aria-pressed="false">Jadwalkan</button>
+            </div>
+            <input class="input" id="start_time" name="start_time" type="datetime-local" aria-label="Tanggal dan jam mulai" disabled hidden>
+            <small class="field-hint" id="start_help">Memakai jam server saat tombol ditekan.</small>
+          </div>
+          <div class="field">
+            <label class="field-label" for="duration">Batas waktu absen <span class="field-hint">menit sejak mulai</span></label>
+            <div class="flex flex-wrap items-center gap-2">
+              <input class="input w-28" id="duration" name="duration" type="number" min="1" max="300" inputmode="numeric" required>
+              <div class="flex flex-wrap gap-2" id="duration_chips">
+                <button type="button" class="tab px-3.5 py-2" data-minutes="15" aria-pressed="false">15</button>
+                <button type="button" class="tab px-3.5 py-2" data-minutes="30" aria-pressed="false">30</button>
+                <button type="button" class="tab px-3.5 py-2" data-minutes="45" aria-pressed="false">45</button>
+                <button type="button" class="tab px-3.5 py-2" data-minutes="60" aria-pressed="false">60</button>
+                <button type="button" class="tab px-3.5 py-2" data-minutes="90" aria-pressed="false">90</button>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2 rounded-2xl border-2 border-gray-800 bg-gray-950/40 p-4 text-sm text-gray-300" id="rule_preview"></div>
+          <div class="alert-error" id="session_form_error" role="alert" hidden></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close>Batal</button>
+          <button type="submit" class="btn btn-primary" id="save_session_button"><i class="fa-solid fa-calendar-plus" aria-hidden="true"></i>Buat &amp; Tampilkan Kode</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/sessions.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="robots" content="noindex">
+  <title>Pengguna · Absensi UBBG</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../src/output.css">
+</head>
+<body data-area="admin" data-page="users" class="min-h-dvh bg-dots pb-28 lg:pb-16">
+  <header id="admin_header" class="fixed inset-x-0 top-5 z-50"></header>
+
+  <main class="admin-width flex flex-col gap-6 pt-32">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-bold tracking-widest text-blue-300 uppercase">Akun</span>
+        <h1 class="font-display text-3xl font-extrabold md:text-4xl">Dosen &amp; admin</h1>
+        <p class="max-w-2xl text-gray-400">Akun yang dapat membuat sesi, mengelola mahasiswa, dan melihat rekap. Password disimpan dalam bentuk hash.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="btn btn-primary" id="add_user_button"><i class="fa-solid fa-user-plus" aria-hidden="true"></i>Tambah Pengguna</button>
+      </div>
+    </div>
+
+    <section class="card flex flex-col">
+      <div class="overflow-x-auto">
+        <table class="data-table">
+          <thead>
+            <tr><th>Nama</th><th class="hidden md:table-cell">Username</th><th class="hidden text-right md:table-cell">Sesi dibuat</th><th class="text-right">Aksi</th></tr>
+          </thead>
+          <tbody id="user_rows"><tr><td colspan="4"><div class="skeleton h-10"></div></td></tr></tbody>
+        </table>
+      </div>
+      <div class="border-t-2 border-gray-800 px-5 py-4 text-xs text-gray-400">
+        Akun yang masih memiliki sesi tidak dapat dihapus agar data absensi tetap utuh.
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="user_modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="user_modal_title">
+      <div class="modal-header">
+        <div>
+          <h2 id="user_modal_title" class="font-display text-xl font-extrabold">Tambah Pengguna</h2>
+          <p class="text-sm text-gray-400">Akun untuk dosen atau admin.</p>
+        </div>
+        <button type="button" class="icon-button" data-close aria-label="Tutup"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      </div>
+      <form id="user_form" class="flex min-h-0 flex-col" novalidate>
+        <input type="hidden" name="user_id" id="user_id">
+        <div class="modal-body">
+          <div class="field">
+            <label class="field-label" for="full_name">Nama lengkap</label>
+            <input class="input" id="full_name" name="full_name" maxlength="100" placeholder="Contoh: Dosen Pengampu, S.Kom., M.T." autocomplete="off" required>
+          </div>
+          <div class="field">
+            <label class="field-label" for="username">Username</label>
+            <input class="input" id="username" name="username" maxlength="50" placeholder="huruf, angka, titik, garis bawah" autocomplete="off" autocapitalize="none" required>
+          </div>
+          <div class="field">
+            <label class="field-label" for="password">Password <span class="field-hint" id="password_hint">minimal 6 karakter</span></label>
+            <div class="relative">
+              <input class="input pr-12" id="password" name="password" type="password" autocomplete="new-password">
+              <button type="button" class="icon-button absolute top-1/2 right-1.5 -translate-y-1/2" id="toggle_password" aria-label="Tampilkan password"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
+            </div>
+          </div>
+          <div class="alert-error" id="user_form_error" role="alert" hidden></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close>Batal</button>
+          <button type="submit" class="btn btn-primary" id="save_user_button"><i class="fa-solid fa-check" aria-hidden="true"></i>Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/users.js"></script>
+</body>
+</html>

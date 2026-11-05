@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="robots" content="noindex">
+  <title>Rekap Kehadiran · Absensi UBBG</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../src/output.css">
+</head>
+<body data-area="admin" data-page="recap" class="min-h-dvh bg-dots pb-28 lg:pb-16">
+  <header id="admin_header" class="fixed inset-x-0 top-5 z-50"></header>
+
+  <main class="admin-width flex flex-col gap-6 pt-32">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-bold tracking-widest text-blue-300 uppercase">Laporan</span>
+        <h1 class="font-display text-3xl font-extrabold md:text-4xl">Rekap kehadiran</h1>
+        <p class="max-w-2xl text-gray-400">Dihitung otomatis dari data absensi. Mahasiswa tanpa data absen pada sesi yang sudah ditutup tercatat tidak hadir.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="btn btn-primary" id="csv_button"><i class="fa-solid fa-file-csv" aria-hidden="true"></i>Ekspor CSV</button>
+      </div>
+    </div>
+
+    <section class="card flex flex-col">
+      <div class="flex flex-col gap-3 border-b-2 border-gray-800 p-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="tab-list" role="group" aria-label="Jenis rekap" id="recap_view">
+          <button type="button" class="tab px-4 py-2" data-value="students" aria-pressed="true"><i class="fa-solid fa-user-graduate" aria-hidden="true"></i>Per mahasiswa</button>
+          <button type="button" class="tab px-4 py-2" data-value="sessions" aria-pressed="false"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i>Per sesi</button>
+        </div>
+        <div class="flex flex-col gap-2 sm:flex-row">
+          <select class="select" id="course_filter" aria-label="Saring mata kuliah"><option value="">Semua mata kuliah</option></select>
+          <select class="select" id="class_filter" aria-label="Saring kelas"><option value="">Semua kelas</option></select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-px border-b-2 border-gray-800 bg-gray-800 lg:grid-cols-4">
+        <div class="flex flex-col gap-1 bg-gray-950 px-5 py-4"><small class="stat-label">Sesi dihitung</small><b class="font-display text-2xl font-extrabold" id="counted_sessions">–</b></div>
+        <div class="flex flex-col gap-1 bg-gray-950 px-5 py-4"><small class="stat-label">Rata-rata kehadiran</small><b class="font-display text-2xl font-extrabold" id="average_attendance">–</b></div>
+        <div class="flex flex-col gap-1 bg-gray-950 px-5 py-4"><small class="stat-label">Total terlambat</small><b class="font-display text-2xl font-extrabold text-amber-200" id="total_late">–</b></div>
+        <div class="flex flex-col gap-1 bg-gray-950 px-5 py-4"><small class="stat-label">Total tidak hadir</small><b class="font-display text-2xl font-extrabold text-red-300" id="total_absent">–</b></div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="data-table">
+          <thead id="recap_head"></thead>
+          <tbody id="recap_rows"><tr><td><div class="skeleton h-10"></div></td></tr></tbody>
+        </table>
+      </div>
+      <div class="flex flex-col gap-1.5 border-t-2 border-gray-800 px-5 py-4 text-xs text-gray-400">
+        <span>Kehadiran = (hadir + terlambat) ÷ jumlah sesi × 100%.</span>
+        <span>Sesi yang masih berlangsung belum menambah angka tidak hadir.</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/recap.js"></script>
+</body>
+</html>

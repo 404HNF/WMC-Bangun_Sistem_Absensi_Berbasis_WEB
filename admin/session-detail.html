@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="robots" content="noindex">
+  <title>Detail Sesi · Absensi UBBG</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../src/output.css">
+</head>
+<body data-area="admin" data-page="sessions" class="min-h-dvh bg-dots pb-28 lg:pb-16">
+  <header id="admin_header" class="fixed inset-x-0 top-5 z-50"></header>
+
+  <main class="admin-width flex flex-col gap-6 pt-32" id="session_main">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div class="flex min-w-0 flex-col gap-2">
+        <a class="inline-flex items-center gap-2 text-sm font-semibold text-gray-400 transition-all hover:text-blue-300" href="sessions.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Semua sesi</a>
+        <h1 class="font-display text-3xl font-extrabold break-words md:text-4xl" id="course_title">Memuat sesi…</h1>
+        <p class="text-gray-400" id="session_meta">&nbsp;</p>
+      </div>
+      <div class="flex flex-wrap gap-2" id="header_actions">
+        <button type="button" class="btn btn-outline" id="projector_button"><i class="fa-solid fa-expand" aria-hidden="true"></i>Mode Proyektor</button>
+        <button type="button" class="btn btn-primary" id="csv_button"><i class="fa-solid fa-file-csv" aria-hidden="true"></i>Ekspor CSV</button>
+      </div>
+    </div>
+
+    <section class="grid grid-cols-1 gap-4 lg:grid-cols-[1.25fr_1fr]">
+      <div class="card flex flex-col gap-5 p-5 md:p-6">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-xs font-bold tracking-widest text-gray-400 uppercase">Kode sesi</span>
+          <span id="session_badge"></span>
+        </div>
+        <div class="font-display text-6xl font-extrabold tracking-[0.12em] text-blue-300 tabular-nums md:text-7xl" id="big_code">––– –––</div>
+        <p class="flex flex-wrap items-center gap-2 text-sm text-gray-300"><i class="fa-solid fa-globe text-gray-500" aria-hidden="true"></i>Alamat absen: <b class="break-all text-white" id="attendance_address">…</b></p>
+
+        <div class="flex flex-col gap-2">
+          <div class="relative h-3 overflow-hidden rounded-full bg-gray-800" id="timeline">
+            <div class="absolute inset-y-0 left-0 bg-emerald-400/35" id="present_zone" style="width:50%"></div>
+            <div class="absolute inset-y-0 right-0 bg-amber-300/35" id="late_zone" style="left:50%"></div>
+            <div class="absolute inset-y-0 left-0 bg-white/25" id="timeline_progress" style="width:0%"></div>
+            <div class="absolute inset-y-0 w-1 -translate-x-1/2 rounded-full bg-white" id="timeline_marker" style="left:0%"></div>
+          </div>
+          <div class="relative flex justify-between text-xs font-semibold text-gray-400">
+            <span id="timeline_start">--:--</span>
+            <span class="absolute -translate-x-1/2" id="timeline_limit" style="left:50%">--:--</span>
+            <span id="timeline_end">--:--</span>
+          </div>
+        </div>
+        <p class="flex flex-wrap items-center gap-2 rounded-2xl bg-gray-950/50 px-4 py-3 text-sm text-gray-200" id="countdown">&nbsp;</p>
+
+        <div class="flex flex-wrap gap-2">
+          <button type="button" class="btn btn-secondary btn-sm" id="copy_button"><i class="fa-solid fa-copy" aria-hidden="true"></i>Salin kode</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="close_session_button" hidden><i class="fa-solid fa-power-off" aria-hidden="true"></i>Tutup absen sekarang</button>
+          <button type="button" class="btn btn-secondary btn-sm hover:bg-red-400 hover:text-gray-950" id="delete_session_button"><i class="fa-solid fa-trash" aria-hidden="true"></i>Hapus sesi</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 lg:gap-4">
+        <div class="stat-card flex-col items-start">
+          <span class="stat-icon bg-emerald-400/15 text-emerald-300"><i class="fa-solid fa-user-check" aria-hidden="true"></i></span>
+          <div><p class="stat-label">Hadir</p><p class="stat-value" id="present_value">–</p><p class="stat-note">absen ≤ <span data-fill="on_time_minutes">15</span> menit</p></div>
+        </div>
+        <div class="stat-card flex-col items-start">
+          <span class="stat-icon bg-amber-300/15 text-amber-300"><i class="fa-solid fa-clock" aria-hidden="true"></i></span>
+          <div><p class="stat-label">Terlambat</p><p class="stat-value" id="late_value">–</p><p class="stat-note">absen &gt; <span data-fill="on_time_minutes">15</span> menit</p></div>
+        </div>
+        <div class="stat-card flex-col items-start">
+          <span class="stat-icon bg-red-400/15 text-red-300"><i class="fa-solid fa-user-xmark" aria-hidden="true"></i></span>
+          <div><p class="stat-label" id="remaining_label">Belum absen</p><p class="stat-value" id="remaining_value">–</p><p class="stat-note" id="remaining_note">&nbsp;</p></div>
+        </div>
+        <div class="stat-card flex-col items-start">
+          <div id="attendance_ring"></div>
+          <div><p class="stat-label">Kehadiran</p><p class="stat-value" id="attended_value">–</p><p class="stat-note">dari <span id="student_total_value">–</span> mahasiswa</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card flex flex-col">
+      <div class="flex items-start justify-between gap-4 border-b-2 border-gray-800 px-5 py-4">
+        <div>
+          <h2 class="text-lg font-bold">Daftar hadir</h2>
+          <p class="text-sm text-gray-400" id="refresh_info">Diperbarui otomatis setiap 5 detik.</p>
+        </div>
+        <span class="badge badge-active" id="live_badge"><span class="size-1.5 animate-pulse rounded-full bg-current"></span>Live</span>
+      </div>
+      <div class="flex flex-col gap-3 border-b-2 border-gray-800 p-4 xl:flex-row xl:items-center xl:justify-between">
+        <div class="tab-list" role="group" aria-label="Saring status kehadiran" id="attendance_filter">
+          <button type="button" class="tab px-4 py-2" data-value="all" aria-pressed="true">Semua <span class="count" id="filter_all_count">0</span></button>
+          <button type="button" class="tab px-4 py-2" data-value="present" aria-pressed="false">Hadir <span class="count" id="filter_present_count">0</span></button>
+          <button type="button" class="tab px-4 py-2" data-value="late" aria-pressed="false">Terlambat <span class="count" id="filter_late_count">0</span></button>
+          <button type="button" class="tab px-4 py-2" data-value="remaining" aria-pressed="false"><span id="filter_remaining_label">Belum absen</span> <span class="count" id="filter_remaining_count">0</span></button>
+        </div>
+        <div class="flex flex-col gap-2 sm:flex-row">
+          <select class="select" id="class_filter" aria-label="Saring kelas"><option value="">Semua kelas</option></select>
+          <label class="search-box">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="search" id="student_search" placeholder="Cari NIM atau nama…" aria-label="Cari mahasiswa">
+          </label>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="hidden md:table-cell">No</th>
+              <th>Mahasiswa</th>
+              <th class="hidden md:table-cell">Kelas</th>
+              <th class="hidden md:table-cell">Waktu absen</th>
+              <th>Status</th>
+              <th class="hidden lg:table-cell">IP client</th>
+              <th class="text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="attendance_rows">
+            <tr><td colspan="7"><div class="skeleton h-10"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex flex-col gap-1.5 border-t-2 border-gray-800 px-5 py-4 text-xs text-gray-400">
+        <span><span class="ip-flag ml-0 mr-1">IP ×2</span> beberapa NIM absen dari alamat IP yang sama (indikasi titip absen).</span>
+        <span>Tombol <b class="text-gray-200">hapus absen</b> dipakai jika mahasiswa ternyata tidak hadir atau menitip absen.</span>
+        <span>Mahasiswa yang didaftarkan setelah sesi ditutup tidak termasuk daftar ini.</span>
+      </div>
+    </section>
+  </main>
+
+  <div class="fixed inset-0 z-80 flex flex-col items-center justify-center gap-6 bg-gray-950 bg-dots p-6 text-center" id="projector" hidden>
+    <button type="button" class="btn btn-outline absolute top-5 right-5" id="close_projector_button"><i class="fa-solid fa-xmark" aria-hidden="true"></i>Tutup (Esc)</button>
+    <div class="flex items-center gap-3 text-2xl font-bold text-gray-200 md:text-3xl">
+      <img src="../assets/img/ubbg-logo-white.png" alt="" class="h-12 md:h-14">
+      <span id="projector_course"></span>
+    </div>
+    <p class="text-lg text-gray-400 md:text-xl">Buka alamat ini di browser HP (Wi-Fi atau data seluler):</p>
+    <p class="font-display text-3xl font-extrabold break-all text-white md:text-5xl" id="projector_address"></p>
+    <div class="font-display text-[clamp(4.5rem,17vw,13rem)] leading-none font-extrabold tracking-[0.08em] text-blue-300 tabular-nums" id="projector_code"></div>
+    <div class="flex flex-wrap items-center justify-center gap-3 text-lg md:text-2xl">
+      <span class="rounded-full bg-gray-900 px-5 py-2 text-gray-200" id="projector_time"></span>
+      <span class="rounded-full bg-gray-900 px-5 py-2 text-gray-200"><b class="text-white" id="projector_count">0</b> mahasiswa sudah absen</span>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/session-detail.js"></script>
+</body>
+</html>

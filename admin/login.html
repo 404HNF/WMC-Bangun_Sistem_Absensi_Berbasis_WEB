@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="robots" content="noindex">
+  <title>Login Dosen · Absensi UBBG</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../src/output.css">
+</head>
+<body data-area="login" data-page="login" class="flex min-h-dvh flex-col bg-dots">
+  <main class="mx-auto flex w-11/12 max-w-md flex-1 flex-col justify-center gap-6 py-10">
+    <a href="../index.html" class="inline-flex items-center gap-2 self-start text-sm font-semibold text-gray-400 transition-all hover:text-blue-300"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Halaman absen mahasiswa</a>
+
+    <div class="card flex flex-col gap-6 bg-gray-900/70 px-6 py-8 md:px-8">
+      <div class="flex flex-col items-center gap-3 text-center">
+        <img src="../assets/img/ubbg-logo-white.png" alt="Logo Universitas Bina Bangsa Getsempena" class="w-20 select-none" draggable="false">
+        <h1 class="font-display text-2xl font-extrabold md:text-3xl">Login Dosen / Admin</h1>
+        <p class="text-sm text-gray-400">Kelola sesi kuliah, data mahasiswa, dan rekap kehadiran.</p>
+      </div>
+
+      <form id="login_form" class="flex flex-col gap-5" novalidate>
+        <div class="field">
+          <label class="field-label" for="username">Username</label>
+          <div class="relative">
+            <i class="fa-solid fa-user pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-gray-500" aria-hidden="true"></i>
+            <input class="input pl-11" id="username" name="username" type="text" autocomplete="username" autocapitalize="none" required autofocus>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="password">Password</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-gray-500" aria-hidden="true"></i>
+            <input class="input pr-12 pl-11" id="password" name="password" type="password" autocomplete="current-password" required>
+            <button type="button" class="icon-button absolute top-1/2 right-1.5 -translate-y-1/2" id="toggle_password" aria-label="Tampilkan password"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <div class="alert-error" id="login_error" role="alert" hidden></div>
+        <button type="submit" class="btn btn-primary btn-lg w-full" id="login_button"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>Masuk</button>
+      </form>
+    </div>
+
+    <p class="text-center text-sm text-gray-500">Universitas Bina Bangsa Getsempena · Banda Aceh</p>
+  </main>
+
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/login.js"></script>
+</body>
+</html>

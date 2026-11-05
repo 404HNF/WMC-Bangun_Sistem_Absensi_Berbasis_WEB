@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="robots" content="noindex">
+  <title>Data Mahasiswa · Absensi UBBG</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../src/output.css">
+</head>
+<body data-area="admin" data-page="students" class="min-h-dvh bg-dots pb-28 lg:pb-16">
+  <header id="admin_header" class="fixed inset-x-0 top-5 z-50"></header>
+
+  <main class="admin-width flex flex-col gap-6 pt-32">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-bold tracking-widest text-blue-300 uppercase">Data master</span>
+        <h1 class="font-display text-3xl font-extrabold md:text-4xl">Data mahasiswa</h1>
+        <p class="max-w-2xl text-gray-400" id="students_summary">Hanya NIM yang terdaftar di sini yang dapat melakukan absen.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="btn btn-primary" id="add_student_button"><i class="fa-solid fa-user-plus" aria-hidden="true"></i>Tambah Mahasiswa</button>
+      </div>
+    </div>
+
+    <section class="card flex flex-col">
+      <div class="flex flex-col gap-2 border-b-2 border-gray-800 p-4 sm:flex-row sm:items-center">
+        <label class="search-box">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input type="search" id="student_search" placeholder="Cari NIM atau nama…" aria-label="Cari mahasiswa">
+        </label>
+        <select class="select" id="class_filter" aria-label="Saring kelas"><option value="">Semua kelas</option></select>
+        <span class="text-sm text-gray-400 sm:ml-auto" id="student_count_info"></span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Mahasiswa</th>
+              <th class="hidden md:table-cell">NIM</th>
+              <th class="hidden md:table-cell">Kelas</th>
+              <th class="hidden md:table-cell">Didaftarkan</th>
+              <th class="text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="student_rows">
+            <tr><td colspan="5"><div class="skeleton h-10"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="student_modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="student_modal_title">
+      <div class="modal-header">
+        <div>
+          <h2 id="student_modal_title" class="font-display text-xl font-extrabold">Tambah Mahasiswa</h2>
+          <p class="text-sm text-gray-400" id="student_modal_subtitle">NIM dipakai mahasiswa untuk absen.</p>
+        </div>
+        <button type="button" class="icon-button" data-close aria-label="Tutup"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      </div>
+      <form id="student_form" class="flex min-h-0 flex-col" novalidate>
+        <div class="modal-body">
+          <div class="field">
+            <label class="field-label" for="student_nim">NIM</label>
+            <input class="input" id="student_nim" name="student_nim" maxlength="20" inputmode="numeric" placeholder="Contoh: 23210134" autocomplete="off" required>
+          </div>
+          <div class="field">
+            <label class="field-label" for="student_name">Nama lengkap</label>
+            <input class="input" id="student_name" name="student_name" maxlength="100" placeholder="Nama sesuai KTM" autocomplete="off" required>
+          </div>
+          <div class="field">
+            <label class="field-label" for="class_name">Kelas</label>
+            <input class="input" id="class_name" name="class_name" maxlength="20" list="class_suggestions" placeholder="Contoh: IK-23A" autocomplete="off" required>
+            <datalist id="class_suggestions"></datalist>
+          </div>
+          <div class="alert-error" id="student_form_error" role="alert" hidden></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close>Batal</button>
+          <button type="submit" class="btn btn-primary" id="save_student_button"><i class="fa-solid fa-check" aria-hidden="true"></i>Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/students.js"></script>
+</body>
+</html>
