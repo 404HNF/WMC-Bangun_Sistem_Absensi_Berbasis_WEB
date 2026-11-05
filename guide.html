@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="description" content="Langkah absen kelas berbasis web dan jawaban atas pesan yang sering muncul.">
+  <title>Cara Absen · Absensi UBBG</title>
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="src/output.css">
+</head>
+<body data-area="public" data-page="guide" class="flex min-h-dvh flex-col">
+  <header class="fixed inset-x-0 top-5 z-50">
+    <nav class="page-width flex h-15 items-center rounded-full bg-blue-300/10 px-3 backdrop-blur-3xl sm:px-5" aria-label="Menu utama">
+      <div class="flex flex-1 items-center">
+        <a href="index.html" class="flex items-center" aria-label="Halaman absen">
+          <img data-logo draggable="false" class="h-8 select-none" src="src/hans_projects_logo.png" alt="Han's Projects">
+        </a>
+      </div>
+      <ul class="hidden md:flex md:gap-8 md:pointer-coarse:hidden xl:gap-15">
+        <li><a class="nav-link" href="index.html">Absen</a></li>
+        <li><a class="nav-link" href="rules.html">Aturan</a></li>
+        <li><a class="nav-link" href="guide.html" aria-current="page">Cara Absen?</a></li>
+      </ul>
+      <div class="flex flex-1 items-center justify-end gap-2">
+        <a href="admin/login.html" class="btn btn-login gap-3" aria-label="Login Dosen"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span class="hidden sm:inline">Login Dosen</span></a>
+        <button type="button" id="menu_button" class="icon-button md:hidden md:pointer-coarse:inline-grid" aria-expanded="false" aria-controls="mobile_menu" aria-label="Buka menu"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+      </div>
+    </nav>
+    <div id="mobile_menu" class="page-width mt-3 flex flex-col gap-1 rounded-3xl border-2 border-gray-800 bg-gray-900/95 p-2 backdrop-blur-3xl md:hidden md:pointer-coarse:flex" hidden>
+      <a class="mobile-link" href="index.html"><i class="fa-solid fa-clipboard-check w-5 text-center" aria-hidden="true"></i>Absen</a>
+      <a class="mobile-link" href="rules.html"><i class="fa-solid fa-scale-balanced w-5 text-center" aria-hidden="true"></i>Aturan</a>
+      <a class="mobile-link" href="guide.html" aria-current="page"><i class="fa-solid fa-circle-question w-5 text-center" aria-hidden="true"></i>Cara Absen?</a>
+      <a class="mobile-link border-t-2 border-gray-800" href="admin/login.html"><i class="fa-solid fa-right-to-bracket w-5 text-center" aria-hidden="true"></i>Login Dosen</a>
+    </div>
+  </header>
+
+  <main class="bg-dots pt-32 pb-20 md:pt-40 md:pb-28">
+    <div class="page-width flex flex-col gap-12">
+      <div class="flex flex-col items-center gap-3 text-center">
+        <h1 class="font-display text-4xl font-extrabold md:text-6xl">Cara Absen</h1>
+        <p class="max-w-2xl text-lg text-gray-300">Tidak perlu instal aplikasi. Cukup browser di HP atau laptop yang terhubung ke internet, dan absen selesai kurang dari satu menit.</p>
+      </div>
+
+      <ol class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <li class="rule-card">
+          <div class="flex items-center justify-between">
+            <span class="grid size-14 place-items-center rounded-xl bg-blue-300/15 text-xl text-blue-300"><i class="fa-solid fa-wifi" aria-hidden="true"></i></span>
+            <span class="font-display text-4xl font-extrabold text-gray-700">01</span>
+          </div>
+          <h2 class="text-xl font-bold">Sambungkan ke internet</h2>
+          <p class="text-gray-300">Gunakan Wi-Fi kampus, hotspot, atau data seluler. Absen bisa dari HP maupun laptop.</p>
+        </li>
+        <li class="rule-card">
+          <div class="flex items-center justify-between">
+            <span class="grid size-14 place-items-center rounded-xl bg-blue-300/15 text-xl text-blue-300"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
+            <span class="font-display text-4xl font-extrabold text-gray-700">02</span>
+          </div>
+          <h2 class="text-xl font-bold">Buka halaman absen</h2>
+          <p class="text-gray-300">Ketik alamat web yang ditampilkan dosen di layar kelas, lalu buka menu <b class="text-white">Absen</b>.</p>
+        </li>
+        <li class="rule-card">
+          <div class="flex items-center justify-between">
+            <span class="grid size-14 place-items-center rounded-xl bg-blue-300/15 text-xl text-blue-300"><i class="fa-solid fa-hashtag" aria-hidden="true"></i></span>
+            <span class="font-display text-4xl font-extrabold text-gray-700">03</span>
+          </div>
+          <h2 class="text-xl font-bold">Masukkan NIM &amp; kode sesi</h2>
+          <p class="text-gray-300">Isi NIM-mu dan kode 6 digit dari dosen. Centang <b class="text-white">Ingat NIM</b> agar tidak perlu mengetik ulang.</p>
+        </li>
+        <li class="rule-card">
+          <div class="flex items-center justify-between">
+            <span class="grid size-14 place-items-center rounded-xl bg-blue-300/15 text-xl text-blue-300"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+            <span class="font-display text-4xl font-extrabold text-gray-700">04</span>
+          </div>
+          <h2 class="text-xl font-bold">Status tercatat otomatis</h2>
+          <p class="text-gray-300">Server mencatat waktu absen dan menentukan status <b class="text-emerald-300">hadir</b> atau <b class="text-amber-200">terlambat</b>, lalu menampilkan rekap kehadiranmu.</p>
+        </li>
+      </ol>
+
+      <section class="flex flex-col gap-5" aria-labelledby="faq_title">
+        <div class="flex flex-col items-center gap-2 text-center">
+          <h2 id="faq_title" class="font-display text-3xl font-bold text-blue-200">Pertanyaan Umum</h2>
+          <p class="text-gray-300">Pesan yang mungkin muncul saat absen dan cara mengatasinya.</p>
+        </div>
+        <div class="flex flex-col gap-3">
+          <details class="faq-item">
+            <summary>NIM tidak terdaftar<i class="fa-solid fa-chevron-down text-sm text-gray-400 transition-transform" aria-hidden="true"></i></summary>
+            <p>Hanya NIM yang sudah didaftarkan yang bisa absen. Periksa kembali NIM-mu, lalu hubungi dosen atau admin agar NIM didaftarkan.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Kode sesi salah<i class="fa-solid fa-chevron-down text-sm text-gray-400 transition-transform" aria-hidden="true"></i></summary>
+            <p>Kode berbeda di setiap sesi. Lihat lagi 6 digit kode yang ditampilkan dosen di layar kelas.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Sesi belum dimulai<i class="fa-solid fa-chevron-down text-sm text-gray-400 transition-transform" aria-hidden="true"></i></summary>
+            <p>Sesi sudah dijadwalkan dosen tetapi jam mulainya belum tiba. Tunggu sampai jam yang tertulis di pesan, lalu kirim lagi.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Sesi sudah ditutup<i class="fa-solid fa-chevron-down text-sm text-gray-400 transition-transform" aria-hidden="true"></i></summary>
+            <p>Batas waktu absen sudah lewat, jadi kamu tercatat tidak hadir. Sampaikan kepada dosen jika ada kendala.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Koneksi putus saat mengirim<i class="fa-solid fa-chevron-down text-sm text-gray-400 transition-transform" aria-hidden="true"></i></summary>
+            <p>Akan muncul pesan gagal dan tombol berubah menjadi <b class="text-white">Kirim Ulang</b>. Sambungkan lagi internetmu, lalu tekan tombol tersebut. Absen tidak akan tercatat dua kali.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Sudah absen pada sesi ini<i class="fa-solid fa-chevron-down text-sm text-gray-400 transition-transform" aria-hidden="true"></i></summary>
+            <p>Satu NIM hanya bisa absen satu kali per sesi. Pesan tersebut juga menampilkan jam dan status absen yang sudah tercatat.</p>
+          </details>
+        </div>
+      </section>
+
+      <div class="flex justify-center">
+        <a href="index.html#attendance" class="btn btn-primary btn-lg"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>Mulai Absen</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="mt-auto bg-black">
+    <div class="page-width flex flex-col items-center gap-5 py-12 text-center">
+      <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-semibold text-gray-400" aria-label="Tautan halaman">
+        <a class="transition-all hover:text-blue-300" href="index.html">Absen</a>
+        <a class="transition-all hover:text-blue-300" href="rules.html">Aturan</a>
+        <a class="transition-all hover:text-blue-300" href="guide.html">Cara Absen?</a>
+        <a class="transition-all hover:text-blue-300" href="staff.html">Staff</a>
+      </nav>
+      <div class="flex flex-col gap-1">
+        <p class="font-semibold text-white">Web Absen Kampus Created By Han's</p>
+        <p class="text-sm text-gray-500">Copyrights © 2026 All Rights Reserved</p>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
